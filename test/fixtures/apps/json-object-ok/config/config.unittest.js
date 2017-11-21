@@ -11,6 +11,7 @@ exports.configValidator = {
     },
   },
   type: 'json',
+  showStandard: true,
 };
 
 exports.person = {

@@ -31,7 +31,7 @@ module.exports = app => {
   if (isEmpty(configValidator)) {
     throw new Error('You have not provide a config for configValidator');
   }
-  const { standard: rawStandard, type } = configValidator;
+  const { standard: rawStandard, type, showStandard } = configValidator;
   if (!isString(type)) throw new Error(`type of configValidator must be string, but not ${typeof type}`);
   const fn = transfers[type.toLowerCase()];
   if (!isFunction(fn)) throw new Error(`We have not support ${type}`);
@@ -42,9 +42,12 @@ module.exports = app => {
   const ajv = new Ajv({
     format: 'full',
   });
+  if (showStandard) {
+    console.log(chalk.cyan(JSON.stringify(schema, null, 2)));
+  }
   const valid = ajv.validate(schema, app.config);
   if (!valid) {
-    console.error(chalk.red('Your config is unlegal!!!'));
+    console.error(chalk.red('Your config is illegal!!!'));
     ajv.errors.forEach(({ message }) => {
       console.error(chalk.red(message));
     });
