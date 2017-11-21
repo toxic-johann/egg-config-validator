@@ -39,7 +39,9 @@ module.exports = app => {
     ? require(rawStandard)
     : rawStandard;
   const schema = transfers[type.toLowerCase()](standard);
-  const ajv = new Ajv();
+  const ajv = new Ajv({
+    format: 'full',
+  });
   const valid = ajv.validate(schema, app.config);
   if (!valid) {
     console.error(chalk.red('Your config is unlegal!!!'));
