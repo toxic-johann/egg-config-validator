@@ -32,7 +32,6 @@ const transfers = {
     return standard;
   },
   json(json) {
-    console.log(chalk.cyan(JSON.stringify(json)));
     const schema = GenerateSchema.json('config', json);
     delete schema.$schema;
     addRequireIntoSchema(schema);
@@ -46,7 +45,11 @@ module.exports = app => {
   if (isEmpty(configValidator)) {
     throw new Error('You have not provide a config for configValidator');
   }
-  const { standard: rawStandard, type, showStandard } = configValidator;
+  const {
+    standard: rawStandard = {},
+    type = 'jsonschema',
+    showStandard = false,
+  } = configValidator;
   if (!isString(type)) throw new Error(`type of configValidator must be string, but not ${typeof type}`);
   const fn = transfers[type.toLowerCase()];
   if (!isFunction(fn)) throw new Error(`We have not support ${type}`);

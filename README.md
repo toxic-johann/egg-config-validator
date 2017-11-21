@@ -47,15 +47,17 @@ exports.configValidator = {
 exports.configValidator = {
   standard: Object | string,
   type: 'json' | 'jsonschema',
+  showStandard: boolean,
 };
 ```
 
 see [config/config.default.js](config/config.default.js) for more detail.
 
-| property | type             | meaning                                  |
-| -------- | ---------------- | ---------------------------------------- |
-| standard | Object \| string | The standard of the config, it can be an Object or a path string pointing to the standard. |
-| type     | String           | We only support jsonschema and json currently. As they are totally the same, you should declare it. |
+| property     | type             | meaning                                  | default    |
+| ------------ | ---------------- | ---------------------------------------- | ---------- |
+| standard     | Object \| string | The standard of the config, it can be an Object or a path string pointing to the standard. | {}         |
+| type         | String           | We only support jsonschema and json currently. As they are totally the same, you should declare it. | jsonschema |
+| showStandard | Boolean          | We will output the json schema in console.log to help you to debug. | false      |
 
 ## Example
 
