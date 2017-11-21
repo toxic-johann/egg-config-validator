@@ -56,7 +56,7 @@ describe('test egg-config-validator', () => {
     const app = mm.app({
       baseDir: 'apps/json-object-url-error',
     });
-    expect(app.ready()).to.rejectedWith("data should have required property 'person'");
+    expect(app.ready()).to.rejectedWith('data.url should match format "url"');
   });
 
   it('use json object and run well', () => {

@@ -1,17 +1,30 @@
 'use strict';
 
 const Ajv = require('ajv');
-const { isEmpty, isString, isFunction } = require('toxic-predicate-functions');
+const { isEmpty, isString, isFunction, isUrl } = require('toxic-predicate-functions');
 const GenerateSchema = require('generate-schema');
 const chalk = require('chalk');
+require('core-js/fn/object/values');
+require('core-js/fn/object/entries');
 
 function addRequireIntoSchema(schema) {
   const { type, properties, required } = schema;
   if (type !== 'object') return schema;
   const keys = Object.keys(properties);
   if (isEmpty(required)) schema.required = keys;
-  keys.forEach(key => addRequireIntoSchema(properties[key]));
+  Object.values(properties).forEach(property => addRequireIntoSchema(property));
   return schema;
+}
+
+function urlCheck(schema, json) {
+  const { properties } = schema;
+  if (isEmpty(schema)) return schema;
+  Object.entries(properties).forEach(([ key, property ]) => {
+    if (property.type === 'object') return urlCheck(properties[key], json[key]);
+    if (property.type === 'string' && isUrl(json[key])) {
+      properties[key].format = 'url';
+    }
+  });
 }
 
 const transfers = {
@@ -19,9 +32,11 @@ const transfers = {
     return standard;
   },
   json(json) {
+    console.log(chalk.cyan(JSON.stringify(json)));
     const schema = GenerateSchema.json('config', json);
     delete schema.$schema;
     addRequireIntoSchema(schema);
+    urlCheck(schema, json);
     return schema;
   },
 };

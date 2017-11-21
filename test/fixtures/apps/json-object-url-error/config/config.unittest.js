@@ -21,4 +21,4 @@ exports.person = {
   age: 33,
 };
 
-exports.url = 'I am not a url';
+exports.url = 'www.baidu.com';
