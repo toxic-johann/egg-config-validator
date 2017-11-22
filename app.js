@@ -6,13 +6,17 @@ const GenerateSchema = require('generate-schema');
 const chalk = require('chalk');
 require('core-js/fn/object/values');
 require('core-js/fn/object/entries');
+require('core-js/fn/object/assign');
 
-function addRequireIntoSchema(schema) {
+function addLimitIntoSchema(schema, { additionalProperties, requiredProperties }) {
   const { type, properties, required } = schema;
   if (type !== 'object') return schema;
-  const keys = Object.keys(properties);
-  if (isEmpty(required)) schema.required = keys;
-  Object.values(properties).forEach(property => addRequireIntoSchema(property));
+  if (requiredProperties) {
+    const keys = Object.keys(properties);
+    if (isEmpty(required)) schema.required = keys;
+  }
+  Object.assign(schema, { additionalProperties });
+  Object.values(properties).forEach(property => addLimitIntoSchema(property, { additionalProperties, requiredProperties }));
   return schema;
 }
 
@@ -31,10 +35,10 @@ const transfers = {
   jsonschema(standard) {
     return standard;
   },
-  json(json) {
+  json(json, { additionalProperties, requiredProperties }) {
     const schema = GenerateSchema.json('config', json);
     delete schema.$schema;
-    addRequireIntoSchema(schema);
+    addLimitIntoSchema(schema, { additionalProperties, requiredProperties });
     urlCheck(schema, json);
     return schema;
   },
@@ -47,8 +51,11 @@ module.exports = app => {
   }
   const {
     standard: rawStandard = {},
+    target,
     type = 'jsonschema',
     showStandard = false,
+    additionalProperties = true,
+    requiredProperties = true,
   } = configValidator;
   if (!isString(type)) throw new Error(`type of configValidator must be string, but not ${typeof type}`);
   const fn = transfers[type.toLowerCase()];
@@ -56,14 +63,19 @@ module.exports = app => {
   const standard = isString(rawStandard)
     ? require(rawStandard)
     : rawStandard;
-  const schema = transfers[type.toLowerCase()](standard);
+  const schema = transfers[type.toLowerCase()](standard, { additionalProperties, requiredProperties });
   const ajv = new Ajv({
     format: 'full',
   });
   if (showStandard) {
     console.log(chalk.cyan(JSON.stringify(schema, null, 2)));
   }
-  const valid = ajv.validate(schema, app.config);
+  const config = isEmpty(target)
+    ? app.config
+    : isString(target)
+      ? require(target)
+      : target;
+  const valid = ajv.validate(schema, config);
   if (!valid) {
     console.error(chalk.red('Your config is illegal!!!'));
     ajv.errors.forEach(({ message }) => {

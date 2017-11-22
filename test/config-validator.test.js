@@ -59,6 +59,21 @@ describe('test egg-config-validator', () => {
     expect(app.ready()).to.rejectedWith('data.url should match format "url"');
   });
 
+  it('use json object to find error on custom config', () => {
+    const app = mm.app({
+      baseDir: 'apps/json-object-custom-config-error',
+    });
+    expect(app.ready()).to.rejectedWith("should have required property 'firstName'");
+  });
+
+  it('use json object to find error on custom config file', () => {
+    const app = mm.app({
+      baseDir: 'apps/json-object-custom-config-file-error',
+    });
+    expect(app.ready()).to.rejectedWith('data.person.name should NOT have additional properties');
+  });
+
+
   it('use json object and run well', () => {
     const app = mm.app({
       baseDir: 'apps/json-object-ok',
