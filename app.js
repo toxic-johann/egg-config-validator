@@ -66,6 +66,7 @@ module.exports = app => {
   const schema = transfers[type.toLowerCase()](standard, { additionalProperties, requiredProperties });
   const ajv = new Ajv({
     format: 'full',
+    allErrors: true,
   });
   if (showStandard) {
     console.log(chalk.cyan(JSON.stringify(schema, null, 2)));
