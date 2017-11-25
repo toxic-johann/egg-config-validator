@@ -1,6 +1,6 @@
 {
   "name": "egg-config-validator",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A plugin to validate the config of egg as your start the egg app",
   "eggPlugin": {
     "name": "configValidator"
