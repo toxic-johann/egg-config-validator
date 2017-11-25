@@ -79,7 +79,15 @@ module.exports = app => {
   const valid = ajv.validate(schema, config);
   if (!valid) {
     console.error(chalk.red('Your config is illegal!!!'));
-    ajv.errors.forEach(({ message }) => {
+    ajv.errors.forEach(({
+      keyword,
+      params,
+      message,
+    }) => {
+      if (keyword === 'additionalProperties') {
+        console.error(chalk.red(`${message} => ${params.additionalProperty}`));
+        return;
+      }
       console.error(chalk.red(message));
     });
     throw new Error(ajv.errorsText());
