@@ -54,12 +54,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eggjs/egg-config-validator.git"
+    "url": "git+https://github.com/toxic-johann/egg-config-validator.git"
   },
   "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
+    "url": "https://github.com/toxic-johann/egg-config-validator/issues"
   },
-  "homepage": "https://github.com/eggjs/egg-config-validator#readme",
+  "homepage": "https://github.com/toxic-johann/egg-config-validator#readme",
   "author": "toxic-johann",
   "license": "MIT"
 }
